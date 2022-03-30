@@ -34,13 +34,15 @@
 
 #ifdef ARDUINO
 #include <Arduino.h>
-#elif __MBED__
+#elif defined(__MBED__) || defined(__PX4_NUTTX)
 #define pgm_read_byte(addr)   (*(const unsigned char *)(addr))
 
+#if __MBED__
 #include <mbed.h>
 #define delay(x)	wait_ms(x)
 #define yield()		void()
-
+#elif __PX4_NUTTX
+#endif
 /*
  * This is a little Arduino String emulation to keep the OLEDDisplay
  * library code in common between Arduino and mbed-os
@@ -156,6 +158,8 @@ char DefaultFontTableLookup(const uint8_t ch);
 class OLEDDisplay : public Print  {
 #elif __MBED__
 class OLEDDisplay : public Stream {
+#elif __PX4_NUTTX
+#error "Building for PX4"
 #else
 #error "Unkown operating system"
 #endif
