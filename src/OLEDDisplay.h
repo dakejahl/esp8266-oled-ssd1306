@@ -42,6 +42,23 @@
 #define delay(x)	wait_ms(x)
 #define yield()		void()
 #elif __PX4_NUTTX
+// #include <px4_platform_common/time.h>
+#include <px4_platform_common/px4_config.h>
+#include <mathlib/mathlib.h>
+#define delay(x)  usleep(1000*x)
+#define yield()   void()
+namespace std {
+template <typename T>
+const T& min(const T& a, const T& b)
+{
+    return (b < a) ? b : a;
+}
+}
+template <typename T>
+const T& max(const T& a, const T& b)
+{
+    return (a < b) ? b : a;
+}
 #endif
 /*
  * This is a little Arduino String emulation to keep the OLEDDisplay
@@ -50,8 +67,8 @@
 class String {
 public:
 	String(const char *s) { _str = s; };
-	int length() { return strlen(_str); };
-	const char *c_str() { return _str; };
+	int length() const { return strlen(_str); };
+	const char *c_str() const { return _str; };
     void toCharArray(char *buf, unsigned int bufsize, unsigned int index = 0) const {
 		memcpy(buf, _str + index,  std::min(bufsize, strlen(_str)));
 	};
@@ -159,7 +176,7 @@ class OLEDDisplay : public Print  {
 #elif __MBED__
 class OLEDDisplay : public Stream {
 #elif __PX4_NUTTX
-#error "Building for PX4"
+class OLEDDisplay {
 #else
 #error "Unkown operating system"
 #endif
@@ -168,8 +185,8 @@ class OLEDDisplay : public Stream {
 	OLEDDisplay();
     virtual ~OLEDDisplay();
 
-	uint16_t width(void) const { return displayWidth; };
-	uint16_t height(void) const { return displayHeight; };
+	uint16_t width(void) const { return _displayWidth; };
+	uint16_t height(void) const { return _displayHeight; };
 
     // Use this to resume after a deep sleep without resetting the display (what init() would do).
     // Returns true if connection to the display was established and the buffer allocated, false otherwise.
@@ -257,14 +274,14 @@ class OLEDDisplay : public Stream {
     // The text will be wrapped to the next line at a space or dash
     // returns 0 if everything fits on the screen or the numbers of characters in the
     // first line if not
-    uint16_t drawStringMaxWidth(int16_t x, int16_t y, uint16_t maxLineWidth, const String &text);
+    uint16_t drawStringMaxWidth(int16_t x, int16_t y, uint16_t maxLineWidth, const String &text) const;
 
     // Returns the width of the const char* with the current
     // font settings
-    uint16_t getStringWidth(const char* text, uint16_t length, bool utf8 = false);
+    uint16_t getStringWidth(const char* text, uint16_t length, bool utf8 = false) const;
 
     // Convencience method for the const char version
-    uint16_t getStringWidth(const String &text);
+    uint16_t getStringWidth(const String &text) const;
 
     // Specifies relative to which anchor point
     // the text is rendered. Available constants:
@@ -340,27 +357,27 @@ class OLEDDisplay : public Stream {
 #endif
 
 
-    uint8_t            *buffer;
+    uint8_t            *_buffer;
 
     #ifdef OLEDDISPLAY_DOUBLE_BUFFER
-    uint8_t            *buffer_back;
+    uint8_t            *_buffer_back;
     #endif
 
   protected:
 
     OLEDDISPLAY_GEOMETRY geometry;
 
-    uint16_t  displayWidth;
-    uint16_t  displayHeight;
-    uint16_t  displayBufferSize;
+    uint16_t  _displayWidth;
+    uint16_t  _displayHeight;
+    uint16_t  _displayBufferSize;
 
     // Set the correct height, width and buffer for the geometry
     void setGeometry(OLEDDISPLAY_GEOMETRY g, uint16_t width = 0, uint16_t height = 0);
 
-    OLEDDISPLAY_TEXT_ALIGNMENT   textAlignment;
-    OLEDDISPLAY_COLOR            color;
+    OLEDDISPLAY_TEXT_ALIGNMENT   _textAlignment;
+    OLEDDISPLAY_COLOR            _color;
 
-    const uint8_t	 *fontData;
+    const uint8_t	 *_fontData;
 
     // State values for logBuffer
     uint16_t   logBufferSize;
@@ -386,9 +403,9 @@ class OLEDDisplay : public Stream {
     // converts utf8 characters to extended ascii
     char* utf8ascii(const String &s);
 
-    void inline drawInternal(int16_t xMove, int16_t yMove, int16_t width, int16_t height, const uint8_t *data, uint16_t offset, uint16_t bytesInData) __attribute__((always_inline));
+    void inline drawInternal(int16_t xMove, int16_t yMove, int16_t width, int16_t height, const uint8_t *data, uint16_t offset, uint16_t bytesInData) const; __attribute__((always_inline));
 
-    uint16_t drawStringInternal(int16_t xMove, int16_t yMove, const char* text, uint16_t textLength, uint16_t textWidth, bool utf8);
+    uint16_t drawStringInternal(int16_t xMove, int16_t yMove, const char* text, uint16_t textLength, uint16_t textWidth, bool utf8) const;
 
 	FontTableLookupFunction fontTableLookupFunction;
 };

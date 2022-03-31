@@ -39,8 +39,8 @@ void LoadingDrawDefault(OLEDDisplay *display, LoadingStage* stage, uint8_t progr
 };
 
 
-OLEDDisplayUi::OLEDDisplayUi(OLEDDisplay *display) {
-  this->display = display;
+OLEDDisplayUi::OLEDDisplayUi(OLEDDisplay *displayfixme) {
+  this->display = displayfixme;
 
   indicatorPosition = BOTTOM;
   indicatorDirection = LEFT_RIGHT;
@@ -139,22 +139,22 @@ void OLEDDisplayUi::setInactiveSymbol(const uint8_t* symbol) {
 void OLEDDisplayUi::setFrameAnimation(AnimationDirection dir) {
   this->frameAnimationDirection = dir;
 }
-void OLEDDisplayUi::setFrames(FrameCallback* frameFunctions, uint8_t frameCount) {
-  this->frameFunctions = frameFunctions;
-  this->frameCount     = frameCount;
+void OLEDDisplayUi::setFrames(FrameCallback* frameFunctionsfixme, uint8_t frameCountfixme) {
+  this->frameFunctions = frameFunctionsfixme;
+  this->frameCount     = frameCountfixme;
   this->resetState();
 }
 
 // -/----- Overlays ------\-
-void OLEDDisplayUi::setOverlays(OverlayCallback* overlayFunctions, uint8_t overlayCount){
-  this->overlayFunctions = overlayFunctions;
-  this->overlayCount     = overlayCount;
+void OLEDDisplayUi::setOverlays(OverlayCallback* overlayFunctionsfixme, uint8_t overlayCountfixme){
+  this->overlayFunctions = overlayFunctionsfixme;
+  this->overlayCount     = overlayCountfixme;
 }
 
 // -/----- Loading Process -----\-
 
-void OLEDDisplayUi::setLoadingDrawFunction(LoadingDrawFunction loadingDrawFunction) {
-  this->loadingDrawFunction = loadingDrawFunction;
+void OLEDDisplayUi::setLoadingDrawFunction(LoadingDrawFunction loadingDrawFunctionfixme) {
+  this->loadingDrawFunction = loadingDrawFunctionfixme;
 }
 
 void OLEDDisplayUi::runLoadingProcess(LoadingStage* stages, uint8_t stagesCount) {
@@ -232,6 +232,8 @@ int16_t OLEDDisplayUi::update(){
 	Timer t;
 	t.start();
 	unsigned long frameStart = t.read_ms();
+#elif __PX4_NUTTX
+  unsigned long frameStart = hrt_abstime() * 1000;
 #else
 #error "Unkown operating system"
 #endif
@@ -247,6 +249,8 @@ int16_t OLEDDisplayUi::update(){
   return this->updateInterval - (millis() - frameStart);
 #elif __MBED__
   return this->updateInterval - (t.read_ms() - frameStart);
+#elif __PX4_NUTTX
+  return this->updateInterval - ((hrt_abstime() * 1000) - frameStart);
 #else
 #error "Unkown operating system"
 #endif
