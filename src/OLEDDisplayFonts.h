@@ -1,7 +1,7 @@
 #ifndef OLEDDISPLAYFONTS_h
 #define OLEDDISPLAYFONTS_h
 
-#ifdef __MBED__
+#if defined(__MBED__) || defined(__PX4_NUTTX)
 #define PROGMEM
 #endif
 

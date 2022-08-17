@@ -36,6 +36,8 @@
 #include <Arduino.h>
 #elif __MBED__
 #include <mbed.h>
+#elif __PX4_NUTTX
+#include <drivers/drv_hrt.h>
 #else
 #error "Unkown operating system"
 #endif
