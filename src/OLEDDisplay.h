@@ -89,10 +89,10 @@ private:
 #define DEBUG_OLEDDISPLAY(...)
 #endif
 
-// Use DOUBLE BUFFERING by default
-#ifndef OLEDDISPLAY_REDUCE_MEMORY
-#define OLEDDISPLAY_DOUBLE_BUFFER
-#endif
+// // Use DOUBLE BUFFERING by default
+// #ifndef OLEDDISPLAY_REDUCE_MEMORY
+// #define OLEDDISPLAY_DOUBLE_BUFFER
+// #endif
 
 // Header Values
 #define JUMPTABLE_BYTES 4

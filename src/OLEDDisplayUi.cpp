@@ -233,7 +233,7 @@ int16_t OLEDDisplayUi::update(){
 	t.start();
 	unsigned long frameStart = t.read_ms();
 #elif __PX4_NUTTX
-  unsigned long frameStart = hrt_abstime() * 1000;
+  unsigned long frameStart = hrt_absolute_time() * 1000;
 #else
 #error "Unkown operating system"
 #endif
@@ -250,7 +250,7 @@ int16_t OLEDDisplayUi::update(){
 #elif __MBED__
   return this->updateInterval - (t.read_ms() - frameStart);
 #elif __PX4_NUTTX
-  return this->updateInterval - ((hrt_abstime() * 1000) - frameStart);
+  return this->updateInterval - ((hrt_absolute_time() * 1000) - frameStart);
 #else
 #error "Unkown operating system"
 #endif
