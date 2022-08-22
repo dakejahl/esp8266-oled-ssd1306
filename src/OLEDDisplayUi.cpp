@@ -142,7 +142,7 @@ void OLEDDisplayUi::setFrameAnimation(AnimationDirection dir) {
 void OLEDDisplayUi::setFrames(FrameCallback* frameFunctionsfixme, uint8_t frameCountfixme) {
   this->frameFunctions = frameFunctionsfixme;
   this->frameCount     = frameCountfixme;
-  this->resetState();
+  // this->resetState();
 }
 
 // -/----- Overlays ------\-
